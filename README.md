@@ -66,7 +66,8 @@ You will build a simple kafka producer application sending sample messages to a 
 
    In VSCode, press Ctrl-Shift-P to get the command pallete, then type spring boot create gradle project, then press enter to go next step to pick spring boot starter modules. </br>
    You can find or add dependencies to build.gradle after project created. Here is an example: </br>
-   ```implementation 'org.springframework.boot:spring-boot-starter'
+   ```
+    implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
@@ -80,8 +81,11 @@ You will build a simple kafka producer application sending sample messages to a 
 
 2. Fill in application properties
    To simplify/flexify the demo, we add kafka configs to application.properties that spring boot application will read as context. </br>
-   Note that the default broker access protocol in Aiven Kafka is SSL and spring boot default is PLAINTEXT.
-   ```spring.kafka.bootstrap-servers=kafka-381da049-yugabyte-a2bd.aivencloud.com:27402
+   * Note1: the default broker access protocol in Aiven Kafka is SSL and spring boot default is PLAINTEXT.
+   * Note2: Spring kafka supports json ser/de. In this example, I use spring kafka json ser/de as value-serializer. 
+
+   ```
+    spring.kafka.bootstrap-servers=kafka-381da049-yugabyte-a2bd.aivencloud.com:27402
     spring.kafka.producer.retries=0
     spring.kafka.producer.acks=all
     spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
@@ -97,19 +101,47 @@ You will build a simple kafka producer application sending sample messages to a 
    ```
 
 3. Define model class
+   The model class is a simple stock ticker with symbol, price and timestamp.
+
+   ```
+    private String symbol;
+    private Double price;
+    private LocalDateTime lastUpdate;
+   ```
 
 4. Use kafka template in Spring Boot application runner
+   To rapidly test the spring boot producer, we write a simple runner to send out two messages to predefined topic with random UUID as key and Message object as payload.
+
+    ```
+	public ApplicationRunner runner(KafkaTemplate<String, Object> template){
+		return args -> {
+			Message message1 = new Message("APPL", 179.00 , LocalDateTime.now());
+			template.send("topic1", UUID.randomUUID().toString(), message1);
+			Message message2 = new Message("WMT", 140.00, LocalDateTime.now());
+			template.send("topic1", UUID.randomUUID().toString(), message2);
+		};
+	}
+    ```
 
 5. Troubleshootings
+   - When using spring kafka and its support json ser/de, we found that two extra fasterxml jars are needed (for missing JavaType in spring kafka ser/de and LocalDateTime class).</br>
+   - Aiven dashboard "Fetch Messages" function cannot process the Messages as json format. I think this might be an issue of how we implement the "toString" override in the Message Class. We will need to add some test cases to check if the Message can be consumed. 
+
 
 ### Check topic content on Aiven web
 
 1. Go to Aiven dashboard -> Kafka service -> Topics -> Topic => **Fetch Message** (Format: binary)
+   ![Aiven Kafka Topic!](screenshots/aiven_kafka_topics1.png)
 
-2. You should see the base64 encoded keys and messages. Click on base64 decode to check the content.
+2. You should see the base64 encoded keys and messages. Click on Decode from base64 to check the content.
+![Aiven Kafka Topic!](screenshots/aiven_kafka_topics2.png)
 
 3. You can also check (format: json) and **Fetch Message**. It triggered an internal error from the WebUI. I checked the log and found that the **Fetch Message** is using python kafka consumer to get the json content. I guess python consumer cannot deserialize the json message I use in Spring Boot.
-### Next: consume (test) and json schema
+
+   ![Aiven Kafka Topic Error!](screenshots/aiven_kafka_topics2_error.png)
+
+### Next: consume (test) and json schema (TBD)
 
 1. Create a kafka consume in spring boot app and make sure spring boot app can ser/de the json message.
 2. Use schema server to help json schema.
+b
