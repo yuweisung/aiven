@@ -144,4 +144,3 @@ You will build a simple kafka producer application sending sample messages to a 
 
 1. Create a kafka consume in spring boot app and make sure spring boot app can ser/de the json message.
 2. Use schema server to help json schema.
-b
