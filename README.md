@@ -22,22 +22,27 @@ You will build a simple kafka producer application sending sample messages to a 
 1. Register a free Aiven account
 
    Go to https://aiven.io and register a free account. You will have 300usd credits which is enough to deploy data services we need in this tutorial. Once you registered, you can login to Aivent dashboard. The dashboard looks like this.</br>
-   ![Aiven Dashboard] (screenshots/Screen Shot 2022-03-22 at 9.13.33 AM.png)
+   ![Aiven Dashboard] (screenshots/aiven_kafka_service1.png)
 2. Create a Kafka service
 
    Click on **+Create a new service** and you should see a list of services available.</br>
-   ![Aiven Service List] (screenshots/Screen Shot 2022-03-22 at 9.13.52 AM.png)
-   
    1. Choose Apache Kafka
+      ![Aiven Service List] (screenshots/aiven_kafka_service2.png)
    2. Select Service Cloud Provider (Google Cloud)
+      ![Aiven Service Cloud Provider] (screenshots/aiven_kafka_service3.png)
    3. Select Service Cloud Region (google-us-central1)
+      ![Aiven Service Cloud Region] (screenshots/aiven_kafka_service4.png)
    4. Select Service Plan (for this tutorial, Startup-2 is good enough)
+      ![Aiven Service Cloud Plan] (screenshots/aiven_kafka_service5.png)
    5. Provide Service Name (optional)
+      ![Aiven Service Plan] (screenshots/aiven_kafka_service6.png)
    6. In Service Summary, click **+ Create Service** to get the Kafka cluster running.
-
+      ![Aiven Service Summary] (screenshots/aiven_kafka_service7.png)
+   7. You can see the Kafka service progress back in the Aiven Dashboard.
+      ![Aiven Service Dashboard] (screenshots/aiven_kafka_service8.png)
 3. Create a InfluxDB and Grafana services
    
-   From the dashboard, you can create an InfluxDB service to store the kafka service metrics data and a grafana service to show kafka metrics. 
+   From the dashboard, you can create an InfluxDB service to store the kafka service metrics data and a grafana service to show kafka metrics.
    
 4. Service integration
    In the Kafka Service page, Metrics tab, click on **Enable Metrics Integration** and pick *Existing service*, then choose the influxDB service from the list, then click **Enable**.  Aiven Cloud will start ingesting Kafka metrics to influxDB. </br>
@@ -49,8 +54,10 @@ You will build a simple kafka producer application sending sample messages to a 
 ### Spring Boot starter with kafka on VS Code
 
 1. Create a Spring Boot project using initiator
-
+   
+   In VSCode, press Ctrl-Shift-P to get the command pallete, then type spring boot create gradle project, then press enter to go next step to pick spring boot starter modules. </br>
 2. Fill in application properties
+   
 
 3. Define model class
 
